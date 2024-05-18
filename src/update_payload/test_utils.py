@@ -17,15 +17,14 @@
 """Utilities for unit testing."""
 
 
-import io
 import hashlib
+import io
 import os
 import struct
 import subprocess
 
-from update_payload import common
-from update_payload import payload
 import update_metadata_pb2
+from update_payload import common, payload
 
 
 class TestError(Exception):

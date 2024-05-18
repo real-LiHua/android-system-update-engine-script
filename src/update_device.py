@@ -23,18 +23,17 @@ import binascii
 import logging
 import os
 import re
+import shutil
 import socket
+import struct
 import subprocess
 import sys
-import struct
 import tempfile
-import time
 import threading
+import time
 import zipfile
-import shutil
 
 from six.moves import BaseHTTPServer
-
 
 # The path used to store the OTA package when applying the package from a file.
 OTA_PACKAGE_PATH = "/data/ota_package"

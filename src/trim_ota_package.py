@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-import zipfile
 import struct
+import zipfile
 
 
 def readPayloadMetadata(zfp: zipfile.ZipFile, entry):

@@ -23,16 +23,13 @@
 
 import sys
 import unittest
-
 from contextlib import contextmanager
 
-from six.moves import StringIO
-
 import mock  # pylint: disable=import-error
+from six.moves import StringIO
 
 import payload_info
 import update_payload
-
 from update_payload import update_metadata_pb2
 
 

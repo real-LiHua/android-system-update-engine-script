@@ -18,10 +18,10 @@
 """Repeatedly install an A/B update to an Android device over adb."""
 
 import argparse
+import signal
+import subprocess
 import sys
 from pathlib import Path
-import subprocess
-import signal
 
 
 def CleanupLoopDevices():

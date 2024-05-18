@@ -27,14 +27,13 @@ import tempfile
 
 # pylint: disable=redefined-builtin
 from six.moves import zip
-from update_payload import error
 
+from update_payload import error
 
 lib_dir = os.path.join(os.path.dirname(__file__), "lib")
 if os.path.exists(lib_dir) and os.path.isdir(lib_dir):
     sys.path.insert(1, lib_dir)
 import update_payload  # pylint: disable=wrong-import-position
-
 
 _TYPE_FULL = "full"
 _TYPE_DELTA = "delta"

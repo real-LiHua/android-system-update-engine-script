@@ -23,8 +23,7 @@
 
 import unittest
 
-from update_payload import format_utils
-from update_payload import histogram
+from update_payload import format_utils, histogram
 
 
 class HistogramTest(unittest.TestCase):

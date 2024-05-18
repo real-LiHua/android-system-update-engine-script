@@ -18,10 +18,10 @@
 """Command-line tool for converting OTA payloads to VABC style COW images."""
 
 import os
+import subprocess
 import sys
 import tempfile
 import zipfile
-import subprocess
 
 
 def IsSparseImage(filepath):

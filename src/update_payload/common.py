@@ -22,7 +22,6 @@ import base64
 import update_metadata_pb2
 from update_payload.error import PayloadError
 
-
 #
 # Constants.
 #

@@ -36,11 +36,8 @@ import subprocess
 # pylint: disable=redefined-builtin
 from six.moves import range
 
-from update_payload import common
-from update_payload import error
-from update_payload import format_utils
-from update_payload import histogram
 import update_metadata_pb2
+from update_payload import common, error, format_utils, histogram
 
 #
 # Constants.

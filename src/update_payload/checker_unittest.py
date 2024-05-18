@@ -29,14 +29,11 @@ import itertools
 import os
 import unittest
 
+import mock  # pylint: disable=import-error
 from six.moves import zip
 
-import mock  # pylint: disable=import-error
-
-from update_payload import checker
-from update_payload import common
-from update_payload import test_utils
 import update_metadata_pb2
+from update_payload import checker, common, test_utils
 from update_payload.error import PayloadError
 from update_payload.payload import Payload  # Avoid name conflicts later.
 

@@ -24,9 +24,9 @@ import sys
 import textwrap
 
 from six.moves import range
+
 import update_metadata_pb2
 import update_payload
-
 
 MAJOR_PAYLOAD_VERSION_BRILLO = 2
 
