@@ -129,9 +129,7 @@ class FakeManifest(object):
 
     def HasField(self, field_name):
         """Fake HasField method based on the python members."""
-        return (
-            hasattr(self, field_name) and getattr(self, field_name) is not None
-        )
+        return hasattr(self, field_name) and getattr(self, field_name) is not None
 
 
 class FakeHeader(object):
@@ -172,9 +170,7 @@ class FakePayload(object):
     def ReadDataBlob(self, offset, length):
         """Return the blob that should be present at the offset location"""
         if not offset in self._blobs:
-            raise FakePayloadError(
-                "Requested blob at unknown offset %d" % offset
-            )
+            raise FakePayloadError("Requested blob at unknown offset %d" % offset)
         blob = self._blobs[offset]
         if len(blob) != length:
             raise FakePayloadError(
@@ -235,9 +231,7 @@ class PayloadCommandTest(unittest.TestCase):
         """Verify that DisplayValue prints what we expect."""
         with self.OutputCapturer() as output:
             payload_info.DisplayValue("key", "value")
-        self.assertEqual(
-            output.getvalue(), "key:                         value\n"
-        )
+        self.assertEqual(output.getvalue(), "key:                         value\n")
 
     def testRun(self):
         """Verify that Run parses and displays the payload like we expect."""
@@ -285,9 +279,7 @@ kernel install operations:
 
     def testStatsOnVersion2(self):
         """Verify that the --stats option works correctly on version 2."""
-        payload_cmd = payload_info.PayloadCommand(
-            FakeOption(stats=True, action="show")
-        )
+        payload_cmd = payload_info.PayloadCommand(FakeOption(stats=True, action="show"))
         payload = FakePayload()
         expected_out = """Payload version:             2
 Manifest length:             222
@@ -326,9 +318,7 @@ No payload signatures stored in the payload
             FakeOption(action="show", signatures=True)
         )
         payload = FakePayload()
-        payload.AddPayloadSignature(
-            version=1, data=b"12345678abcdefgh\x00\x01\x02\x03"
-        )
+        payload.AddPayloadSignature(version=1, data=b"12345678abcdefgh\x00\x01\x02\x03")
         payload.AddPayloadSignature(data=b"I am a signature so access is yes.")
         payload.AddMetadataSignature(data=b"\x00\x0a\x0c")
         expected_out = """Payload version:             2

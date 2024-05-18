@@ -257,9 +257,7 @@ class ServerThread(threading.Thread):
         UpdateHandler.serving_payload = ota_filename
         UpdateHandler.serving_range = serving_range
         UpdateHandler.speed_limit = speed_limit
-        self._httpd = BaseHTTPServer.HTTPServer(
-            ("127.0.0.1", 0), UpdateHandler
-        )
+        self._httpd = BaseHTTPServer.HTTPServer(("127.0.0.1", 0), UpdateHandler)
         self.port = self._httpd.server_port
 
     def run(self):
@@ -368,9 +366,7 @@ def PushMetadata(dut, otafile, metadata_path):
                     manifest_size,
                     metadata_signature_size,
                 ) = struct.unpack(header_format, header)
-                assert (
-                    magic == b"CrAU"
-                ), "Invalid magic {}, expected CrAU".format(magic)
+                assert magic == b"CrAU", "Invalid magic {}, expected CrAU".format(magic)
                 assert (
                     major_version == 2
                 ), "Invalid major version {}, only version 2 is supported".format(
@@ -433,9 +429,7 @@ def main():
         metavar="DEVICE",
         help="The specific device to use.",
     )
-    parser.add_argument(
-        "--no-verbose", action="store_true", help="Less verbose output"
-    )
+    parser.add_argument("--no-verbose", action="store_true", help="Less verbose output")
     parser.add_argument(
         "--public-key",
         type=str,
@@ -530,9 +524,7 @@ def main():
     if args.speed_limit:
         args.speed_limit = ParseSpeedLimit(args.speed_limit)
 
-    logging.basicConfig(
-        level=logging.WARNING if args.no_verbose else logging.INFO
-    )
+    logging.basicConfig(level=logging.WARNING if args.no_verbose else logging.INFO)
 
     start_time = time.perf_counter()
 
@@ -558,9 +550,7 @@ def main():
                     "shell",
                     "update_engine_client",
                     "--allocate",
-                    "--metadata={} --headers='{}'".format(
-                        metadata_path, headers
-                    ),
+                    "--metadata={} --headers='{}'".format(metadata_path, headers),
                 ]
             )
         # Return 0, as we are executing ADB commands here, no work needed after
@@ -663,21 +653,15 @@ def main():
                     device_ota_file,
                 ]
             )
-        cmds.append(
-            ["shell", "su", "0", "chown", "system:cache", device_ota_file]
-        )
+        cmds.append(["shell", "su", "0", "chown", "system:cache", device_ota_file])
         cmds.append(["shell", "su", "0", "chmod", "0660", device_ota_file])
     else:
         # Update via sending the payload over the network with an "adb reverse"
         # command.
         payload_url = "http://127.0.0.1:%d/payload" % DEVICE_PORT
         serving_range = (0, os.stat(args.otafile).st_size)
-        server_thread = StartServer(
-            args.otafile, serving_range, args.speed_limit
-        )
-        cmds.append(
-            ["reverse", "tcp:%d" % DEVICE_PORT, "tcp:%d" % server_thread.port]
-        )
+        server_thread = StartServer(args.otafile, serving_range, args.speed_limit)
+        cmds.append(["reverse", "tcp:%d" % DEVICE_PORT, "tcp:%d" % server_thread.port])
         finalize_cmds.append(["reverse", "--remove", "tcp:%d" % DEVICE_PORT])
 
     if args.public_key:
@@ -737,9 +721,7 @@ def main():
         for cmd in finalize_cmds:
             dut.adb(cmd, 5)
 
-    logging.info(
-        "Update took %.3f seconds", (time.perf_counter() - start_time)
-    )
+    logging.info("Update took %.3f seconds", (time.perf_counter() - start_time))
     return 0
 
 

@@ -109,9 +109,7 @@ class PayloadCheckerTest(unittest.TestCase):
         """tearDown function for unittest testcase"""
         # Verify that all mock functions were called.
         for check in self.mock_checks:
-            check.mock_fn.assert_called_once_with(
-                *check.exp_args, **check.exp_kwargs
-            )
+            check.mock_fn.assert_called_once_with(*check.exp_args, **check.exp_kwargs)
 
     class MockChecksAtTearDown(object):
         """Mock data storage.
@@ -133,9 +131,7 @@ class PayloadCheckerTest(unittest.TestCase):
           args: expected positional arguments for the mock_fn
           kwargs: expected named arguments for the mock_fn
         """
-        self.mock_checks.append(
-            self.MockChecksAtTearDown(mock_fn, *args, **kwargs)
-        )
+        self.mock_checks.append(self.MockChecksAtTearDown(mock_fn, *args, **kwargs))
 
     def MockPayload(self):
         """Create a mock payload object, complete with a mock manifest."""
@@ -179,9 +175,7 @@ class PayloadCheckerTest(unittest.TestCase):
         """
         ex_list = []
         for start_block, num_blocks in args:
-            ex_list.append(
-                PayloadCheckerTest.NewExtent(start_block, num_blocks)
-            )
+            ex_list.append(PayloadCheckerTest.NewExtent(start_block, num_blocks))
         return ex_list
 
     @staticmethod
@@ -256,23 +250,16 @@ class PayloadCheckerTest(unittest.TestCase):
         kwargs = {"convert": convert, "linebreak": linebreak, "indent": indent}
         if is_mandatory and not is_present:
             self.assertRaises(
-                PayloadError,
-                checker.PayloadChecker._CheckElem,
-                *args,
-                **kwargs
+                PayloadError, checker.PayloadChecker._CheckElem, *args, **kwargs
             )
         else:
-            ret_val, ret_subreport = checker.PayloadChecker._CheckElem(
-                *args, **kwargs
-            )
+            ret_val, ret_subreport = checker.PayloadChecker._CheckElem(*args, **kwargs)
             self.assertEqual(val if is_present else None, ret_val)
             self.assertEqual(
                 subreport if is_present and is_submsg else None, ret_subreport
             )
 
-    def DoAddFieldTest(
-        self, is_mandatory, is_present, convert, linebreak, indent
-    ):
+    def DoAddFieldTest(self, is_mandatory, is_present, convert, linebreak, indent):
         """Parametric testing of _Check{Mandatory,Optional}Field().
 
         Args:
@@ -309,9 +296,7 @@ class PayloadCheckerTest(unittest.TestCase):
           is_mandatory: Whether we're testing a mandatory call.
           is_present: Whether or not the element is found in the message.
         """
-        msg, report, subreport, name, val = self.SetupAddElemTest(
-            is_present, True
-        )
+        msg, report, subreport, name, val = self.SetupAddElemTest(is_present, True)
 
         # Prepare for invocation of the tested method.
         args = [msg, name, report]
@@ -332,14 +317,10 @@ class PayloadCheckerTest(unittest.TestCase):
     def testCheckPresentIff(self):
         """Tests _CheckPresentIff()."""
         self.assertIsNone(
-            checker.PayloadChecker._CheckPresentIff(
-                None, None, "foo", "bar", "baz"
-            )
+            checker.PayloadChecker._CheckPresentIff(None, None, "foo", "bar", "baz")
         )
         self.assertIsNone(
-            checker.PayloadChecker._CheckPresentIff(
-                "a", "b", "foo", "bar", "baz"
-            )
+            checker.PayloadChecker._CheckPresentIff("a", "b", "foo", "bar", "baz")
         )
         self.assertRaises(
             PayloadError,
@@ -380,9 +361,7 @@ class PayloadCheckerTest(unittest.TestCase):
           expected_signed_hash: The signed hash data to compare against.
         """
         # Stub out the subprocess invocation.
-        with mock.patch.object(
-            checker.PayloadChecker, "_Run"
-        ) as mock_payload_checker:
+        with mock.patch.object(checker.PayloadChecker, "_Run") as mock_payload_checker:
             if expect_subprocess_call:
                 mock_payload_checker([], send_data=sig_data)
                 mock_payload_checker.return_value = (
@@ -628,45 +607,27 @@ class PayloadCheckerTest(unittest.TestCase):
         # Add old kernel/rootfs partition info, as required.
         if fail_mismatched_oki_ori or fail_old_kernel_fs_size or fail_bad_oki:
             oki_hash = (
-                None
-                if fail_bad_oki
-                else hashlib.sha256(b"fake-oki-content").digest()
+                None if fail_bad_oki else hashlib.sha256(b"fake-oki-content").digest()
             )
-            payload_gen.SetPartInfo(
-                common.KERNEL, False, old_kernel_fs_size, oki_hash
-            )
-        if not fail_mismatched_oki_ori and (
-            fail_old_rootfs_fs_size or fail_bad_ori
-        ):
+            payload_gen.SetPartInfo(common.KERNEL, False, old_kernel_fs_size, oki_hash)
+        if not fail_mismatched_oki_ori and (fail_old_rootfs_fs_size or fail_bad_ori):
             ori_hash = (
-                None
-                if fail_bad_ori
-                else hashlib.sha256(b"fake-ori-content").digest()
+                None if fail_bad_ori else hashlib.sha256(b"fake-ori-content").digest()
             )
-            payload_gen.SetPartInfo(
-                common.ROOTFS, False, old_rootfs_fs_size, ori_hash
-            )
+            payload_gen.SetPartInfo(common.ROOTFS, False, old_rootfs_fs_size, ori_hash)
 
         # Add new kernel/rootfs partition info.
         payload_gen.SetPartInfo(
             common.KERNEL,
             True,
             new_kernel_fs_size,
-            (
-                None
-                if fail_bad_nki
-                else hashlib.sha256(b"fake-nki-content").digest()
-            ),
+            (None if fail_bad_nki else hashlib.sha256(b"fake-nki-content").digest()),
         )
         payload_gen.SetPartInfo(
             common.ROOTFS,
             True,
             new_rootfs_fs_size,
-            (
-                None
-                if fail_bad_nri
-                else hashlib.sha256(b"fake-nri-content").digest()
-            ),
+            (None if fail_bad_nri else hashlib.sha256(b"fake-nri-content").digest()),
         )
 
         # Set the minor version.
@@ -702,9 +663,7 @@ class PayloadCheckerTest(unittest.TestCase):
                 part_sizes,
             )
         else:
-            self.assertIsNone(
-                payload_checker._CheckManifest(report, part_sizes)
-            )
+            self.assertIsNone(payload_checker._CheckManifest(report, part_sizes))
 
     def testCheckLength(self):
         """Tests _CheckLength()."""
@@ -713,9 +672,7 @@ class PayloadCheckerTest(unittest.TestCase):
 
         # Passes.
         self.assertIsNone(
-            payload_checker._CheckLength(
-                int(3.5 * block_size), 4, "foo", "bar"
-            )
+            payload_checker._CheckLength(int(3.5 * block_size), 4, "foo", "bar")
         )
         # Fails, too few blocks.
         self.assertRaises(
@@ -984,9 +941,7 @@ class PayloadCheckerTest(unittest.TestCase):
         op = update_metadata_pb2.InstallOperation()
 
         # Pass.
-        self.assertIsNone(
-            payload_checker._CheckAnyDiffOperation(op, 10000, 3, "foo")
-        )
+        self.assertIsNone(payload_checker._CheckAnyDiffOperation(op, 10000, 3, "foo"))
 
         # Fail, missing data blob.
         self.assertRaises(
@@ -1074,9 +1029,7 @@ class PayloadCheckerTest(unittest.TestCase):
 
         # Create the test object.
         payload = self.MockPayload()
-        payload_checker = checker.PayloadChecker(
-            payload, allow_unhashed=allow_unhashed
-        )
+        payload_checker = checker.PayloadChecker(payload, allow_unhashed=allow_unhashed)
         block_size = payload_checker.block_size
 
         # Create auxiliary arguments.
@@ -1138,9 +1091,7 @@ class PayloadCheckerTest(unittest.TestCase):
             fake_data = "fake-data".ljust(op.data_length)
             if not allow_unhashed and not fail_data_hash:
                 # Create a valid data blob hash.
-                op.data_sha256_hash = hashlib.sha256(
-                    fake_data.encode("utf-8")
-                ).digest()
+                op.data_sha256_hash = hashlib.sha256(fake_data.encode("utf-8")).digest()
                 payload.ReadDataBlob.return_value = fake_data.encode("utf-8")
 
             elif fail_data_hash:
@@ -1154,13 +1105,9 @@ class PayloadCheckerTest(unittest.TestCase):
         if not fail_missing_dst_extents:
             total_dst_blocks = 16
             if fail_dst_extents:
-                self.AddToMessage(
-                    op.dst_extents, self.NewExtentList((4, 16), (32, 0))
-                )
+                self.AddToMessage(op.dst_extents, self.NewExtentList((4, 16), (32, 0)))
             else:
-                self.AddToMessage(
-                    op.dst_extents, self.NewExtentList((4, 8), (64, 8))
-                )
+                self.AddToMessage(op.dst_extents, self.NewExtentList((4, 8), (64, 8)))
 
         if total_src_blocks:
             if fail_src_length:
@@ -1205,9 +1152,7 @@ class PayloadCheckerTest(unittest.TestCase):
             blob_hash_counts,
         )
         if should_fail:
-            self.assertRaises(
-                PayloadError, payload_checker._CheckOperation, *args
-            )
+            self.assertRaises(PayloadError, payload_checker._CheckOperation, *args)
         else:
             self.assertEqual(
                 op.data_length if op.HasField("data_length") else 0,
@@ -1282,9 +1227,7 @@ class PayloadCheckerTest(unittest.TestCase):
             0,
         )
         if fail_nonexhaustive_full_update:
-            self.assertRaises(
-                PayloadError, payload_checker._CheckOperations, *args
-            )
+            self.assertRaises(PayloadError, payload_checker._CheckOperations, *args)
         else:
             self.assertEqual(
                 rootfs_data_length, payload_checker._CheckOperations(*args)
@@ -1373,9 +1316,7 @@ class PayloadCheckerTest(unittest.TestCase):
         )
         args = (report, test_utils._PUBKEY_FILE_NAME)
         if should_fail:
-            self.assertRaises(
-                PayloadError, payload_checker._CheckSignatures, *args
-            )
+            self.assertRaises(PayloadError, payload_checker._CheckSignatures, *args)
         else:
             self.assertIsNone(payload_checker._CheckSignatures(*args))
 
@@ -1403,9 +1344,7 @@ class PayloadCheckerTest(unittest.TestCase):
         args = (report,)
 
         if should_succeed:
-            self.assertIsNone(
-                payload_checker._CheckManifestMinorVersion(*args)
-            )
+            self.assertIsNone(payload_checker._CheckManifestMinorVersion(*args))
         else:
             self.assertRaises(
                 PayloadError, payload_checker._CheckManifestMinorVersion, *args
@@ -1563,9 +1502,7 @@ def ValidateCheckOperationTest(
 
     # SOURCE_COPY operation does not carry data.
     if op_type == common.OpType.SOURCE_COPY and (
-        fail_mismatched_data_offset_length
-        or fail_data_hash
-        or fail_prev_data_offset
+        fail_mismatched_data_offset_length or fail_data_hash or fail_prev_data_offset
     ):
         return False
 

@@ -55,20 +55,16 @@ def ConvertCOW(ota_path, target_file_path, tmp_dir, output_dir):
             img_name = os.path.basename(fileinfo.filename)
             if not fileinfo.filename.endswith(".img"):
                 continue
-            if fileinfo.filename.startswith(
-                "IMAGES/"
-            ) or fileinfo.filename.startswith("RADIO/"):
+            if fileinfo.filename.startswith("IMAGES/") or fileinfo.filename.startswith(
+                "RADIO/"
+            ):
                 img_path = zfp.extract(fileinfo, tmp_dir)
                 target_img_path = os.path.join(output_dir, img_name)
                 if IsSparseImage(img_path):
-                    subprocess.check_call(
-                        ["simg2img", img_path, target_img_path]
-                    )
+                    subprocess.check_call(["simg2img", img_path, target_img_path])
                 else:
                     os.rename(img_path, target_img_path)
-                print(
-                    "Extracted", fileinfo.filename, "size:", fileinfo.file_size
-                )
+                print("Extracted", fileinfo.filename, "size:", fileinfo.file_size)
 
     subprocess.call(["cow_converter", payload_path, output_dir])
 

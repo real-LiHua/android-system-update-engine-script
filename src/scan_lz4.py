@@ -55,9 +55,7 @@ def scan_lz4_frames(data):
             header_checksum = data[index : index + 1]
             index += 1
             print(
-                "Lz4 frame at {}, content size: {}".format(
-                    frame_offset, content_size
-                )
+                "Lz4 frame at {}, content size: {}".format(frame_offset, content_size)
             )
             while index < len(data):
                 (block_size,) = struct.unpack("<L", data[index : index + 4])
@@ -68,9 +66,7 @@ def scan_lz4_frames(data):
                 if index >= len(data) or block_size == 0:
                     break
                 print(
-                    "Block uncompressed: {}, size: {}".format(
-                        uncompressed, block_size
-                    )
+                    "Block uncompressed: {}, size: {}".format(uncompressed, block_size)
                 )
         except ValueError:
             break

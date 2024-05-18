@@ -97,8 +97,7 @@ class PayloadCommand:
             offset = header.size + header.manifest_len
             DisplayValue(
                 "Metadata signatures blob",
-                "file_offset=%d (%d bytes)"
-                % (offset, header.metadata_signature_len),
+                "file_offset=%d (%d bytes)" % (offset, header.metadata_signature_len),
             )
             # pylint: disable=invalid-unary-operand-type
             signatures_blob = self.payload.ReadDataBlob(
@@ -129,18 +128,13 @@ class PayloadCommand:
         signatures.ParseFromString(signatures_blob)
         # pylint: disable=no-member
         print(
-            "%s signatures: (%d entries)"
-            % (signature_name, len(signatures.signatures))
+            "%s signatures: (%d entries)" % (signature_name, len(signatures.signatures))
         )
         for signature in signatures.signatures:
             print(
                 "  version=%s, hex_data: (%d bytes)"
                 % (
-                    (
-                        signature.version
-                        if signature.HasField("version")
-                        else None
-                    ),
+                    (signature.version if signature.HasField("version") else None),
                     len(signature.data),
                 )
             )
@@ -162,8 +156,7 @@ class PayloadCommand:
             """Show information about extents."""
             num_blocks = sum([ext.num_blocks for ext in extents])
             ext_str = " ".join(
-                "(%s,%s)" % (ext.start_block, ext.num_blocks)
-                for ext in extents
+                "(%s,%s)" % (ext.start_block, ext.num_blocks) for ext in extents
             )
             # Make extent list wrap around at 80 chars.
             ext_str = "\n      ".join(textwrap.wrap(ext_str, 74))
@@ -201,12 +194,8 @@ class PayloadCommand:
         for partition in manifest.partitions:
             last_ext = None
             for curr_op in partition.operations:
-                read_blocks += sum(
-                    [ext.num_blocks for ext in curr_op.src_extents]
-                )
-                written_blocks += sum(
-                    [ext.num_blocks for ext in curr_op.dst_extents]
-                )
+                read_blocks += sum([ext.num_blocks for ext in curr_op.src_extents])
+                written_blocks += sum([ext.num_blocks for ext in curr_op.dst_extents])
                 for curr_ext in curr_op.dst_extents:
                     # See if the extent is contiguous with the last extent seen.
                     if last_ext and (
@@ -217,12 +206,8 @@ class PayloadCommand:
                     last_ext = curr_ext
 
             # Old and new partitions are read once during verification.
-            read_blocks += (
-                partition.old_partition_info.size // manifest.block_size
-            )
-            read_blocks += (
-                partition.new_partition_info.size // manifest.block_size
-            )
+            read_blocks += partition.old_partition_info.size // manifest.block_size
+            read_blocks += partition.new_partition_info.size // manifest.block_size
 
         stats = {
             "read_blocks": read_blocks,

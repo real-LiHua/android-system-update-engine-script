@@ -42,9 +42,7 @@ class HistogramTest(unittest.TestCase):
         self.assertEqual(actual_str, expected_str)
 
     def testExampleHistogram(self):
-        self.CompareToExpectedDefault(
-            str(histogram.Histogram([("Yes", 5), ("No", 1)]))
-        )
+        self.CompareToExpectedDefault(str(histogram.Histogram([("Yes", 5), ("No", 1)])))
 
     def testFromCountDict(self):
         self.CompareToExpectedDefault(

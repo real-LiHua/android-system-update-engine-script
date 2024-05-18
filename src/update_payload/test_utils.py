@@ -32,12 +32,8 @@ class TestError(Exception):
 
 
 # Private/public RSA keys used for testing.
-_PRIVKEY_FILE_NAME = os.path.join(
-    os.path.dirname(__file__), "payload-test-key.pem"
-)
-_PUBKEY_FILE_NAME = os.path.join(
-    os.path.dirname(__file__), "payload-test-key.pub"
-)
+_PRIVKEY_FILE_NAME = os.path.join(os.path.dirname(__file__), "payload-test-key.pem")
+_PUBKEY_FILE_NAME = os.path.join(os.path.dirname(__file__), "payload-test-key.pub")
 
 
 def KiB(count):
@@ -69,9 +65,7 @@ def _WriteInt(file_obj, size, is_unsigned, val):
       PayloadError if a write error occurred.
     """
     try:
-        file_obj.write(
-            struct.pack(common.IntPackingFmtStr(size, is_unsigned), val)
-        )
+        file_obj.write(struct.pack(common.IntPackingFmtStr(size, is_unsigned), val))
     except IOError as e:
         raise payload.PayloadError(
             "error writing to file (%s): %s" % (file_obj.name, e)
@@ -188,11 +182,7 @@ class PayloadGenerator(object):
           part_hash: The partition hash.
         """
         partition = next(
-            (
-                x
-                for x in self.manifest.partitions
-                if x.partition_name == part_name
-            ),
+            (x for x in self.manifest.partitions if x.partition_name == part_name),
             None,
         )
         if partition is None:
@@ -200,9 +190,7 @@ class PayloadGenerator(object):
             partition.partition_name = part_name
 
         part_info = (
-            partition.new_partition_info
-            if is_new
-            else partition.old_partition_info
+            partition.new_partition_info if is_new else partition.old_partition_info
         )
         _SetMsgField(part_info, "size", part_size)
         _SetMsgField(part_info, "hash", part_hash)
@@ -221,11 +209,7 @@ class PayloadGenerator(object):
     ):
         """Adds an InstallOperation entry."""
         partition = next(
-            (
-                x
-                for x in self.manifest.partitions
-                if x.partition_name == part_name
-            ),
+            (x for x in self.manifest.partitions if x.partition_name == part_name),
             None,
         )
         if partition is None:
@@ -410,9 +394,7 @@ class EnhancedPayloadGenerator(PayloadGenerator):
             sigs_gen = SignaturesGenerator()
             sigs_gen.AddSig(1, sig)
             sigs_data = sigs_gen.ToBinary()
-            assert (
-                len(sigs_data) == sigs_len
-            ), "signature blob lengths mismatch"
+            assert len(sigs_data) == sigs_len, "signature blob lengths mismatch"
 
         # Dump the whole thing, complete with data and signature blob, to a file.
         self.WriteToFile(
