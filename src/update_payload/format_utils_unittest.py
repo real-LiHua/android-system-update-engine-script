@@ -47,12 +47,20 @@ class NumToPercentTest(unittest.TestCase):
         self.assertEqual(format_utils.NumToPercent(3, 90000000), "0%")
 
     def testCustomMinPrecision(self):
-        self.assertEqual(format_utils.NumToPercent(3, 9, min_precision=3), "33.333%")
-        self.assertEqual(format_utils.NumToPercent(3, 9, min_precision=0), "33%")
+        self.assertEqual(
+            format_utils.NumToPercent(3, 9, min_precision=3), "33.333%"
+        )
+        self.assertEqual(
+            format_utils.NumToPercent(3, 9, min_precision=0), "33%"
+        )
 
     def testCustomMaxPrecision(self):
-        self.assertEqual(format_utils.NumToPercent(3, 900, max_precision=1), "0.3%")
-        self.assertEqual(format_utils.NumToPercent(3, 9000, max_precision=1), "0%")
+        self.assertEqual(
+            format_utils.NumToPercent(3, 900, max_precision=1), "0.3%"
+        )
+        self.assertEqual(
+            format_utils.NumToPercent(3, 9000, max_precision=1), "0%"
+        )
 
 
 class BytesToHumanReadableTest(unittest.TestCase):
@@ -61,11 +69,17 @@ class BytesToHumanReadableTest(unittest.TestCase):
     def testBaseTwo(self):
         self.assertEqual(format_utils.BytesToHumanReadable(0x1000), "4 KiB")
         self.assertEqual(format_utils.BytesToHumanReadable(0x400000), "4 MiB")
-        self.assertEqual(format_utils.BytesToHumanReadable(0x100000000), "4 GiB")
-        self.assertEqual(format_utils.BytesToHumanReadable(0x40000000000), "4 TiB")
+        self.assertEqual(
+            format_utils.BytesToHumanReadable(0x100000000), "4 GiB"
+        )
+        self.assertEqual(
+            format_utils.BytesToHumanReadable(0x40000000000), "4 TiB"
+        )
 
     def testDecimal(self):
-        self.assertEqual(format_utils.BytesToHumanReadable(5000, decimal=True), "5 kB")
+        self.assertEqual(
+            format_utils.BytesToHumanReadable(5000, decimal=True), "5 kB"
+        )
         self.assertEqual(
             format_utils.BytesToHumanReadable(5000000, decimal=True), "5 MB"
         )
@@ -75,7 +89,9 @@ class BytesToHumanReadableTest(unittest.TestCase):
 
     def testDefaultPrecision(self):
         self.assertEqual(format_utils.BytesToHumanReadable(5000), "4.8 KiB")
-        self.assertEqual(format_utils.BytesToHumanReadable(500000), "488.2 KiB")
+        self.assertEqual(
+            format_utils.BytesToHumanReadable(500000), "488.2 KiB"
+        )
         self.assertEqual(format_utils.BytesToHumanReadable(5000000), "4.7 MiB")
 
     def testCustomPrecision(self):
@@ -86,7 +102,8 @@ class BytesToHumanReadableTest(unittest.TestCase):
             format_utils.BytesToHumanReadable(500000, precision=0), "488 KiB"
         )
         self.assertEqual(
-            format_utils.BytesToHumanReadable(5000000, precision=5), "4.76837 MiB"
+            format_utils.BytesToHumanReadable(5000000, precision=5),
+            "4.76837 MiB",
         )
 
 

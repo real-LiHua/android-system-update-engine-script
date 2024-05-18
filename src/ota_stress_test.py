@@ -30,7 +30,9 @@ def CleanupLoopDevices():
 
 
 def CancelOTA():
-    subprocess.call(["adb", "shell", "su", "0", "update_engine_client", "--cancel"])
+    subprocess.call(
+        ["adb", "shell", "su", "0", "update_engine_client", "--cancel"]
+    )
 
 
 def PerformOTAThenPause(otafile: Path, update_device_script: Path):
@@ -82,7 +84,12 @@ def PerformTest(otafile: Path, resumes: int, timeout: int):
     CancelOTA()
     CleanupLoopDevices()
 
-    ota_cmd = [python, str(update_device_script), str(otafile), "--no-postinstall"]
+    ota_cmd = [
+        python,
+        str(update_device_script),
+        str(otafile),
+        "--no-postinstall",
+    ]
     print("Finishing OTA Update", ota_cmd)
     output = subprocess.check_output(
         ota_cmd, stderr=subprocess.STDOUT, timeout=timeout
@@ -90,7 +97,9 @@ def PerformTest(otafile: Path, resumes: int, timeout: int):
     print(output)
     if "onPayloadApplicationComplete(ErrorCode::kSuccess" not in output:
         raise RuntimeError("Failed to finish OTA")
-    subprocess.call(["adb", "shell", "su", "0", "update_engine_client", "--cancel"])
+    subprocess.call(
+        ["adb", "shell", "su", "0", "update_engine_client", "--cancel"]
+    )
     subprocess.check_call(
         ["adb", "shell", "su", "0", "update_engine_client", "--reset_status"]
     )
@@ -98,7 +107,9 @@ def PerformTest(otafile: Path, resumes: int, timeout: int):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Android A/B OTA stress test helper.")
+    parser = argparse.ArgumentParser(
+        description="Android A/B OTA stress test helper."
+    )
     parser.add_argument(
         "otafile",
         metavar="PAYLOAD",

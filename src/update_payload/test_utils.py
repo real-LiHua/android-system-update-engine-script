@@ -32,8 +32,12 @@ class TestError(Exception):
 
 
 # Private/public RSA keys used for testing.
-_PRIVKEY_FILE_NAME = os.path.join(os.path.dirname(__file__), "payload-test-key.pem")
-_PUBKEY_FILE_NAME = os.path.join(os.path.dirname(__file__), "payload-test-key.pub")
+_PRIVKEY_FILE_NAME = os.path.join(
+    os.path.dirname(__file__), "payload-test-key.pem"
+)
+_PUBKEY_FILE_NAME = os.path.join(
+    os.path.dirname(__file__), "payload-test-key.pub"
+)
 
 
 def KiB(count):
@@ -65,9 +69,13 @@ def _WriteInt(file_obj, size, is_unsigned, val):
       PayloadError if a write error occurred.
     """
     try:
-        file_obj.write(struct.pack(common.IntPackingFmtStr(size, is_unsigned), val))
+        file_obj.write(
+            struct.pack(common.IntPackingFmtStr(size, is_unsigned), val)
+        )
     except IOError as e:
-        raise payload.PayloadError("error writing to file (%s): %s" % (file_obj.name, e))
+        raise payload.PayloadError(
+            "error writing to file (%s): %s" % (file_obj.name, e)
+        )
 
 
 def _SetMsgField(msg, field_name, val):
@@ -180,14 +188,21 @@ class PayloadGenerator(object):
           part_hash: The partition hash.
         """
         partition = next(
-            (x for x in self.manifest.partitions if x.partition_name == part_name), None
+            (
+                x
+                for x in self.manifest.partitions
+                if x.partition_name == part_name
+            ),
+            None,
         )
         if partition is None:
             partition = self.manifest.partitions.add()
             partition.partition_name = part_name
 
         part_info = (
-            partition.new_partition_info if is_new else partition.old_partition_info
+            partition.new_partition_info
+            if is_new
+            else partition.old_partition_info
         )
         _SetMsgField(part_info, "size", part_size)
         _SetMsgField(part_info, "hash", part_hash)
@@ -206,7 +221,12 @@ class PayloadGenerator(object):
     ):
         """Adds an InstallOperation entry."""
         partition = next(
-            (x for x in self.manifest.partitions if x.partition_name == part_name), None
+            (
+                x
+                for x in self.manifest.partitions
+                if x.partition_name == part_name
+            ),
+            None,
         )
         if partition is None:
             partition = self.manifest.partitions.add()
@@ -242,7 +262,10 @@ class PayloadGenerator(object):
         # pylint: disable=W0212
         file_obj.write(payload.Payload._PayloadHeader._MAGIC)
         _WriteInt(
-            file_obj, payload.Payload._PayloadHeader._VERSION_SIZE, True, self.version
+            file_obj,
+            payload.Payload._PayloadHeader._VERSION_SIZE,
+            True,
+            self.version,
         )
         _WriteInt(
             file_obj,
@@ -252,7 +275,12 @@ class PayloadGenerator(object):
         )
 
     def WriteToFile(
-        self, file_obj, manifest_len=-1, data_blobs=None, sigs_data=None, padding=None
+        self,
+        file_obj,
+        manifest_len=-1,
+        data_blobs=None,
+        sigs_data=None,
+        padding=None,
     ):
         """Writes the payload content to a file.
 
@@ -382,9 +410,14 @@ class EnhancedPayloadGenerator(PayloadGenerator):
             sigs_gen = SignaturesGenerator()
             sigs_gen.AddSig(1, sig)
             sigs_data = sigs_gen.ToBinary()
-            assert len(sigs_data) == sigs_len, "signature blob lengths mismatch"
+            assert (
+                len(sigs_data) == sigs_len
+            ), "signature blob lengths mismatch"
 
         # Dump the whole thing, complete with data and signature blob, to a file.
         self.WriteToFile(
-            file_obj, data_blobs=self.data_blobs, sigs_data=sigs_data, padding=padding
+            file_obj,
+            data_blobs=self.data_blobs,
+            sigs_data=sigs_data,
+            padding=padding,
         )

@@ -4,7 +4,9 @@
 
 import sys
 
-_b = sys.version_info[0] < 3 and (lambda x: x) or (lambda x: x.encode("latin1"))
+_b = (
+    sys.version_info[0] < 3 and (lambda x: x) or (lambda x: x.encode("latin1"))
+)
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
@@ -33,13 +35,25 @@ _INSTALLOPERATION_TYPE = _descriptor.EnumDescriptor(
     file=DESCRIPTOR,
     values=[
         _descriptor.EnumValueDescriptor(
-            name="REPLACE", index=0, number=0, serialized_options=None, type=None
+            name="REPLACE",
+            index=0,
+            number=0,
+            serialized_options=None,
+            type=None,
         ),
         _descriptor.EnumValueDescriptor(
-            name="REPLACE_BZ", index=1, number=1, serialized_options=None, type=None
+            name="REPLACE_BZ",
+            index=1,
+            number=1,
+            serialized_options=None,
+            type=None,
         ),
         _descriptor.EnumValueDescriptor(
-            name="MOVE", index=2, number=2, serialized_options=_b("\010\001"), type=None
+            name="MOVE",
+            index=2,
+            number=2,
+            serialized_options=_b("\010\001"),
+            type=None,
         ),
         _descriptor.EnumValueDescriptor(
             name="BSDIFF",
@@ -49,28 +63,56 @@ _INSTALLOPERATION_TYPE = _descriptor.EnumDescriptor(
             type=None,
         ),
         _descriptor.EnumValueDescriptor(
-            name="SOURCE_COPY", index=4, number=4, serialized_options=None, type=None
+            name="SOURCE_COPY",
+            index=4,
+            number=4,
+            serialized_options=None,
+            type=None,
         ),
         _descriptor.EnumValueDescriptor(
-            name="SOURCE_BSDIFF", index=5, number=5, serialized_options=None, type=None
+            name="SOURCE_BSDIFF",
+            index=5,
+            number=5,
+            serialized_options=None,
+            type=None,
         ),
         _descriptor.EnumValueDescriptor(
-            name="REPLACE_XZ", index=6, number=8, serialized_options=None, type=None
+            name="REPLACE_XZ",
+            index=6,
+            number=8,
+            serialized_options=None,
+            type=None,
         ),
         _descriptor.EnumValueDescriptor(
             name="ZERO", index=7, number=6, serialized_options=None, type=None
         ),
         _descriptor.EnumValueDescriptor(
-            name="DISCARD", index=8, number=7, serialized_options=None, type=None
+            name="DISCARD",
+            index=8,
+            number=7,
+            serialized_options=None,
+            type=None,
         ),
         _descriptor.EnumValueDescriptor(
-            name="BROTLI_BSDIFF", index=9, number=10, serialized_options=None, type=None
+            name="BROTLI_BSDIFF",
+            index=9,
+            number=10,
+            serialized_options=None,
+            type=None,
         ),
         _descriptor.EnumValueDescriptor(
-            name="PUFFDIFF", index=10, number=9, serialized_options=None, type=None
+            name="PUFFDIFF",
+            index=10,
+            number=9,
+            serialized_options=None,
+            type=None,
         ),
         _descriptor.EnumValueDescriptor(
-            name="ZUCCHINI", index=11, number=11, serialized_options=None, type=None
+            name="ZUCCHINI",
+            index=11,
+            number=11,
+            serialized_options=None,
+            type=None,
         ),
         _descriptor.EnumValueDescriptor(
             name="LZ4DIFF_BSDIFF",
@@ -101,13 +143,25 @@ _COWMERGEOPERATION_TYPE = _descriptor.EnumDescriptor(
     file=DESCRIPTOR,
     values=[
         _descriptor.EnumValueDescriptor(
-            name="COW_COPY", index=0, number=0, serialized_options=None, type=None
+            name="COW_COPY",
+            index=0,
+            number=0,
+            serialized_options=None,
+            type=None,
         ),
         _descriptor.EnumValueDescriptor(
-            name="COW_XOR", index=1, number=1, serialized_options=None, type=None
+            name="COW_XOR",
+            index=1,
+            number=1,
+            serialized_options=None,
+            type=None,
         ),
         _descriptor.EnumValueDescriptor(
-            name="COW_REPLACE", index=2, number=2, serialized_options=None, type=None
+            name="COW_REPLACE",
+            index=2,
+            number=2,
+            serialized_options=None,
+            type=None,
         ),
     ],
     containing_type=None,
@@ -1596,23 +1650,33 @@ _COWMERGEOPERATION_TYPE.containing_type = _COWMERGEOPERATION
 _PARTITIONUPDATE.fields_by_name["new_partition_signature"].message_type = (
     _SIGNATURES_SIGNATURE
 )
-_PARTITIONUPDATE.fields_by_name["old_partition_info"].message_type = _PARTITIONINFO
-_PARTITIONUPDATE.fields_by_name["new_partition_info"].message_type = _PARTITIONINFO
+_PARTITIONUPDATE.fields_by_name["old_partition_info"].message_type = (
+    _PARTITIONINFO
+)
+_PARTITIONUPDATE.fields_by_name["new_partition_info"].message_type = (
+    _PARTITIONINFO
+)
 _PARTITIONUPDATE.fields_by_name["operations"].message_type = _INSTALLOPERATION
 _PARTITIONUPDATE.fields_by_name["hash_tree_data_extent"].message_type = _EXTENT
 _PARTITIONUPDATE.fields_by_name["hash_tree_extent"].message_type = _EXTENT
 _PARTITIONUPDATE.fields_by_name["fec_data_extent"].message_type = _EXTENT
 _PARTITIONUPDATE.fields_by_name["fec_extent"].message_type = _EXTENT
-_PARTITIONUPDATE.fields_by_name["merge_operations"].message_type = _COWMERGEOPERATION
-_DYNAMICPARTITIONMETADATA.fields_by_name["groups"].message_type = _DYNAMICPARTITIONGROUP
+_PARTITIONUPDATE.fields_by_name["merge_operations"].message_type = (
+    _COWMERGEOPERATION
+)
+_DYNAMICPARTITIONMETADATA.fields_by_name["groups"].message_type = (
+    _DYNAMICPARTITIONGROUP
+)
 _DYNAMICPARTITIONMETADATA.fields_by_name["vabc_feature_set"].message_type = (
     _VABCFEATURESET
 )
 _APEXMETADATA.fields_by_name["apex_info"].message_type = _APEXINFO
-_DELTAARCHIVEMANIFEST.fields_by_name["partitions"].message_type = _PARTITIONUPDATE
-_DELTAARCHIVEMANIFEST.fields_by_name["dynamic_partition_metadata"].message_type = (
-    _DYNAMICPARTITIONMETADATA
+_DELTAARCHIVEMANIFEST.fields_by_name["partitions"].message_type = (
+    _PARTITIONUPDATE
 )
+_DELTAARCHIVEMANIFEST.fields_by_name[
+    "dynamic_partition_metadata"
+].message_type = _DYNAMICPARTITIONMETADATA
 _DELTAARCHIVEMANIFEST.fields_by_name["apex_info"].message_type = _APEXINFO
 DESCRIPTOR.message_types_by_name["Extent"] = _EXTENT
 DESCRIPTOR.message_types_by_name["Signatures"] = _SIGNATURES
@@ -1620,12 +1684,18 @@ DESCRIPTOR.message_types_by_name["PartitionInfo"] = _PARTITIONINFO
 DESCRIPTOR.message_types_by_name["InstallOperation"] = _INSTALLOPERATION
 DESCRIPTOR.message_types_by_name["CowMergeOperation"] = _COWMERGEOPERATION
 DESCRIPTOR.message_types_by_name["PartitionUpdate"] = _PARTITIONUPDATE
-DESCRIPTOR.message_types_by_name["DynamicPartitionGroup"] = _DYNAMICPARTITIONGROUP
+DESCRIPTOR.message_types_by_name["DynamicPartitionGroup"] = (
+    _DYNAMICPARTITIONGROUP
+)
 DESCRIPTOR.message_types_by_name["VABCFeatureSet"] = _VABCFEATURESET
-DESCRIPTOR.message_types_by_name["DynamicPartitionMetadata"] = _DYNAMICPARTITIONMETADATA
+DESCRIPTOR.message_types_by_name["DynamicPartitionMetadata"] = (
+    _DYNAMICPARTITIONMETADATA
+)
 DESCRIPTOR.message_types_by_name["ApexInfo"] = _APEXINFO
 DESCRIPTOR.message_types_by_name["ApexMetadata"] = _APEXMETADATA
-DESCRIPTOR.message_types_by_name["DeltaArchiveManifest"] = _DELTAARCHIVEMANIFEST
+DESCRIPTOR.message_types_by_name["DeltaArchiveManifest"] = (
+    _DELTAARCHIVEMANIFEST
+)
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 Extent = _reflection.GeneratedProtocolMessageType(

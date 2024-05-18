@@ -25,9 +25,6 @@ import os
 import sys
 import tempfile
 
-# pylint: disable=redefined-builtin
-from six.moves import zip
-
 from update_payload import error
 
 lib_dir = os.path.join(os.path.dirname(__file__), "lib")
@@ -102,7 +99,10 @@ def ParseArguments(argv):
         help=("force payload integrity check (e.g. before " "applying)"),
     )
     check_args.add_argument(
-        "-r", "--report", metavar="FILE", help="dump payload report (`-' for stdout)"
+        "-r",
+        "--report",
+        metavar="FILE",
+        help="dump payload report (`-' for stdout)",
     )
     check_args.add_argument(
         "-t",
@@ -133,7 +133,8 @@ def ParseArguments(argv):
         metavar="",
         help=(
             "space separated list of tests to disable. "
-            "allowed options include: " + ", ".join(update_payload.CHECKS_TO_DISABLE)
+            "allowed options include: "
+            + ", ".join(update_payload.CHECKS_TO_DISABLE)
         ),
         choices=update_payload.CHECKS_TO_DISABLE,
     )
@@ -144,7 +145,10 @@ def ParseArguments(argv):
         help=("override standard key used for signature " "validation"),
     )
     check_args.add_argument(
-        "-m", "--meta-sig", metavar="FILE", help="verify metadata against its signature"
+        "-m",
+        "--meta-sig",
+        metavar="FILE",
+        help="verify metadata against its signature",
     )
     check_args.add_argument(
         "-s",
@@ -168,20 +172,33 @@ def ParseArguments(argv):
         "--extract-bsdiff",
         action="store_true",
         default=False,
-        help=("use temp input/output files with BSDIFF " "operations (not in-place)"),
+        help=(
+            "use temp input/output files with BSDIFF "
+            "operations (not in-place)"
+        ),
     )
     apply_args.add_argument(
-        "--bspatch-path", metavar="FILE", help="use the specified bspatch binary"
+        "--bspatch-path",
+        metavar="FILE",
+        help="use the specified bspatch binary",
     )
     apply_args.add_argument(
-        "--puffpatch-path", metavar="FILE", help="use the specified puffpatch binary"
+        "--puffpatch-path",
+        metavar="FILE",
+        help="use the specified puffpatch binary",
     )
 
     apply_args.add_argument(
-        "--src_part_paths", metavar="FILE", nargs="+", help="source partitition files"
+        "--src_part_paths",
+        metavar="FILE",
+        nargs="+",
+        help="source partitition files",
     )
     apply_args.add_argument(
-        "--dst_part_paths", metavar="FILE", nargs="+", help="destination partition files"
+        "--dst_part_paths",
+        metavar="FILE",
+        nargs="+",
+        help="destination partition files",
     )
     apply_args.add_argument(
         "--out_dst_part_paths",
@@ -214,7 +231,12 @@ def ParseArguments(argv):
 
     # Makes sure the following arguments have the same length as |part_names| if
     # set.
-    for arg in ["part_sizes", "src_part_paths", "dst_part_paths", "out_dst_part_paths"]:
+    for arg in [
+        "part_sizes",
+        "src_part_paths",
+        "dst_part_paths",
+        "out_dst_part_paths",
+    ]:
         if getattr(args, arg) is None:
             # Parameter is not set.
             continue
@@ -229,25 +251,33 @@ def ParseArguments(argv):
         if _IsSrcPartPathsProvided(args):
             if args.assert_type == _TYPE_FULL:
                 parser.error(
-                    "%s payload does not accept source partition arguments" % _TYPE_FULL
+                    "%s payload does not accept source partition arguments"
+                    % _TYPE_FULL
                 )
             else:
                 args.assert_type = _TYPE_DELTA
         else:
             if args.assert_type == _TYPE_DELTA:
                 parser.error(
-                    "%s payload requires source partitions arguments" % _TYPE_DELTA
+                    "%s payload requires source partitions arguments"
+                    % _TYPE_DELTA
                 )
             else:
                 args.assert_type = _TYPE_FULL
     else:
         # Not applying payload.
         if args.extract_bsdiff:
-            parser.error("--extract-bsdiff can only be used when applying payloads")
+            parser.error(
+                "--extract-bsdiff can only be used when applying payloads"
+            )
         if args.bspatch_path:
-            parser.error("--bspatch-path can only be used when applying payloads")
+            parser.error(
+                "--bspatch-path can only be used when applying payloads"
+            )
         if args.puffpatch_path:
-            parser.error("--puffpatch-path can only be used when applying payloads")
+            parser.error(
+                "--puffpatch-path can only be used when applying payloads"
+            )
 
     # By default, look for a metadata-signature file with a name based on the name
     # of the payload we are checking. We only do it if check was triggered.
@@ -255,7 +285,11 @@ def ParseArguments(argv):
         default_meta_sig = args.payload + ".metadata-signature"
         if os.path.isfile(default_meta_sig):
             args.meta_sig = default_meta_sig
-            print("Using default metadata signature", args.meta_sig, file=sys.stderr)
+            print(
+                "Using default metadata signature",
+                args.meta_sig,
+                file=sys.stderr,
+            )
 
     return args
 
@@ -286,7 +320,9 @@ def main(argv):
                     part_sizes = args.part_sizes and dict(
                         zip(args.part_names, args.part_sizes)
                     )
-                    metadata_sig_file = args.meta_sig and open(args.meta_sig, "rb")
+                    metadata_sig_file = args.meta_sig and open(
+                        args.meta_sig, "rb"
+                    )
                     payload.Check(
                         pubkey_file_name=args.key,
                         metadata_sig_file=metadata_sig_file,
@@ -312,12 +348,16 @@ def main(argv):
                 if args.puffpatch_path:
                     dargs["puffpatch_path"] = args.puffpatch_path
                 if args.assert_type == _TYPE_DELTA:
-                    dargs["old_parts"] = dict(zip(args.part_names, args.src_part_paths))
+                    dargs["old_parts"] = dict(
+                        zip(args.part_names, args.src_part_paths)
+                    )
 
                 out_dst_parts = {}
                 file_handles = []
                 if args.out_dst_part_paths is not None:
-                    for name, path in zip(args.part_names, args.out_dst_part_paths):
+                    for name, path in zip(
+                        args.part_names, args.out_dst_part_paths
+                    ):
                         handle = open(path, "wb+")
                         file_handles.append(handle)
                         out_dst_parts[name] = handle.name

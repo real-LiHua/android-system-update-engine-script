@@ -106,4 +106,8 @@ def BytesToHumanReadable(size, precision=1, decimal=False):
         frac = (size % magnitude) * (10**precision) // magnitude
         while frac and not frac % 10:
             frac /= 10
-        return "%d%s %s" % (whole, ".%d" % frac if frac else "", suffixes[exp - 1])
+        return "%d%s %s" % (
+            whole,
+            ".%d" % frac if frac else "",
+            suffixes[exp - 1],
+        )

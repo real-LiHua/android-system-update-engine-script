@@ -33,9 +33,6 @@ import itertools
 import os
 import subprocess
 
-# pylint: disable=redefined-builtin
-from six.moves import range
-
 import update_metadata_pb2
 from update_payload import common, error, format_utils, histogram
 
@@ -162,7 +159,9 @@ class _PayloadReport(object):
             """Generates a properly formatted 'name : value' entry."""
             report_output = ""
             if self.name:
-                report_output += self.name.ljust(curr_section.max_field_name_len) + " :"
+                report_output += (
+                    self.name.ljust(curr_section.max_field_name_len) + " :"
+                )
             value_lines = str(self.value).splitlines()
             if self.linebreak and self.name:
                 report_output += "\n" + "\n".join(
@@ -175,7 +174,10 @@ class _PayloadReport(object):
                 cont_line_indent = len(report_output)
                 indented_value_lines = [value_lines[0]]
                 indented_value_lines.extend(
-                    ["%*s%s" % (cont_line_indent, "", line) for line in value_lines[1:]]
+                    [
+                        "%*s%s" % (cont_line_indent, "", line)
+                        for line in value_lines[1:]
+                    ]
                 )
                 report_output += "\n".join(indented_value_lines)
 
@@ -327,10 +329,13 @@ class PayloadChecker(object):
         self.block_size = block_size if block_size else _DEFAULT_BLOCK_SIZE
         if not _IsPowerOfTwo(self.block_size):
             raise error.PayloadError(
-                "Expected block (%d) size is not a power of two." % self.block_size
+                "Expected block (%d) size is not a power of two."
+                % self.block_size
             )
         if assert_type not in (None, _TYPE_FULL, _TYPE_DELTA):
-            raise error.PayloadError("Invalid assert_type value (%r)." % assert_type)
+            raise error.PayloadError(
+                "Invalid assert_type value (%r)." % assert_type
+            )
         self.payload_type = assert_type
         self.allow_unhashed = allow_unhashed
 
@@ -387,7 +392,9 @@ class PayloadChecker(object):
         Raises:
           error.PayloadError if a mandatory element is missing.
         """
-        element_result = collections.namedtuple("element_result", ["msg", "report"])
+        element_result = collections.namedtuple(
+            "element_result", ["msg", "report"]
+        )
 
         if not msg.HasField(name):
             if is_mandatory:
@@ -406,7 +413,9 @@ class PayloadChecker(object):
             return element_result(value, report and report.AddSubReport(name))
         else:
             if report:
-                report.AddField(name, convert(value), linebreak=linebreak, indent=indent)
+                report.AddField(
+                    name, convert(value), linebreak=linebreak, indent=indent
+                )
             return element_result(value, None)
 
     @staticmethod
@@ -441,12 +450,19 @@ class PayloadChecker(object):
         """
         if msg.HasField(field_name):
             raise error.PayloadError(
-                "%sfield %r exists." % (msg_name + " " if msg_name else "", field_name)
+                "%sfield %r exists."
+                % (msg_name + " " if msg_name else "", field_name)
             )
 
     @staticmethod
     def _CheckMandatoryField(
-        msg, field_name, report, msg_name, convert=str, linebreak=False, indent=0
+        msg,
+        field_name,
+        report,
+        msg_name,
+        convert=str,
+        linebreak=False,
+        indent=0,
     ):
         """Adds a mandatory field; returning first component from _CheckElem."""
         return PayloadChecker._CheckElem(
@@ -480,7 +496,9 @@ class PayloadChecker(object):
     @staticmethod
     def _CheckMandatorySubMsg(msg, submsg_name, report, msg_name):
         """Adds a mandatory sub-message; wrapper for _CheckElem."""
-        return PayloadChecker._CheckElem(msg, submsg_name, report, True, True, msg_name)
+        return PayloadChecker._CheckElem(
+            msg, submsg_name, report, True, True, msg_name
+        )
 
     @staticmethod
     def _CheckOptionalSubMsg(msg, submsg_name, report):
@@ -502,7 +520,9 @@ class PayloadChecker(object):
           error.PayloadError if assertion does not hold.
         """
         if None in (val1, val2) and val1 is not val2:
-            present, missing = (name1, name2) if val2 is None else (name2, name1)
+            present, missing = (
+                (name1, name2) if val2 is None else (name2, name1)
+            )
             raise error.PayloadError(
                 "%r present without %r%s."
                 % (present, missing, " in " + obj_name if obj_name else "")
@@ -546,12 +566,16 @@ class PayloadChecker(object):
             exit_code = run_process.wait()
 
         if exit_code:
-            raise RuntimeError("Subprocess %r failed with code %r." % (cmd, exit_code))
+            raise RuntimeError(
+                "Subprocess %r failed with code %r." % (cmd, exit_code)
+            )
 
         return result
 
     @staticmethod
-    def _CheckSha256Signature(sig_data, pubkey_file_name, actual_hash, sig_name):
+    def _CheckSha256Signature(
+        sig_data, pubkey_file_name, actual_hash, sig_name
+    ):
         """Verifies an actual hash against a signed one.
 
         Args:
@@ -569,13 +593,21 @@ class PayloadChecker(object):
                 % (sig_name, len(sig_data))
             )
         signed_data, _ = PayloadChecker._Run(
-            ["openssl", "rsautl", "-verify", "-pubin", "-inkey", pubkey_file_name],
+            [
+                "openssl",
+                "rsautl",
+                "-verify",
+                "-pubin",
+                "-inkey",
+                pubkey_file_name,
+            ],
             send_data=sig_data,
         )
 
         if len(signed_data) != len(common.SIG_ASN1_HEADER) + 32:
             raise error.PayloadError(
-                "%s: unexpected signed data length (%d)." % (sig_name, len(signed_data))
+                "%s: unexpected signed data length (%d)."
+                % (sig_name, len(signed_data))
             )
 
         if not signed_data.startswith(common.SIG_ASN1_HEADER):
@@ -617,14 +649,26 @@ class PayloadChecker(object):
         if length > num_blocks * block_size:
             raise error.PayloadError(
                 "%s (%d) > num %sblocks (%d) * block_size (%d)."
-                % (length_name, length, block_name or "", num_blocks, block_size)
+                % (
+                    length_name,
+                    length,
+                    block_name or "",
+                    num_blocks,
+                    block_size,
+                )
             )
 
         # Check: length > (num_blocks - 1) * block_size.
         if length <= (num_blocks - 1) * block_size:
             raise error.PayloadError(
                 "%s (%d) <= (num %sblocks - 1 (%d)) * block_size (%d)."
-                % (length_name, length, block_name or "", num_blocks - 1, block_size)
+                % (
+                    length_name,
+                    length,
+                    block_name or "",
+                    num_blocks - 1,
+                    block_size,
+                )
             )
 
     def _CheckManifestMinorVersion(self, report):
@@ -640,7 +684,10 @@ class PayloadChecker(object):
             self.payload.manifest, "minor_version", report
         )
         if self.minor_version in _SUPPORTED_MINOR_VERSIONS:
-            if self.payload_type not in _SUPPORTED_MINOR_VERSIONS[self.minor_version]:
+            if (
+                self.payload_type
+                not in _SUPPORTED_MINOR_VERSIONS[self.minor_version]
+            ):
                 raise error.PayloadError(
                     "Minor version %d not compatible with payload type %s."
                     % (self.minor_version, self.payload_type)
@@ -686,7 +733,9 @@ class PayloadChecker(object):
         self.sigs_offset = self._CheckOptionalField(
             manifest, "signatures_offset", report
         )
-        self.sigs_size = self._CheckOptionalField(manifest, "signatures_size", report)
+        self.sigs_size = self._CheckOptionalField(
+            manifest, "signatures_size", report
+        )
         self._CheckPresentIff(
             self.sigs_offset,
             self.sigs_size,
@@ -706,17 +755,25 @@ class PayloadChecker(object):
 
         # Check: Old-style partition infos should not be specified.
         for _, part in common.CROS_PARTITIONS:
-            self._CheckElemNotPresent(manifest, "old_%s_info" % part, "manifest")
-            self._CheckElemNotPresent(manifest, "new_%s_info" % part, "manifest")
+            self._CheckElemNotPresent(
+                manifest, "old_%s_info" % part, "manifest"
+            )
+            self._CheckElemNotPresent(
+                manifest, "new_%s_info" % part, "manifest"
+            )
 
         # Check: If old_partition_info is specified anywhere, it must be
         # specified everywhere.
-        old_part_msgs = [part.msg for part in self.old_part_info.values() if part]
+        old_part_msgs = [
+            part.msg for part in self.old_part_info.values() if part
+        ]
         self._CheckPresentIffMany(
             old_part_msgs, "old_partition_info", "manifest.partitions"
         )
 
-        is_delta = any(part and part.msg for part in self.old_part_info.values())
+        is_delta = any(
+            part and part.msg for part in self.old_part_info.values()
+        )
         if is_delta:
             # Assert/mark delta payload.
             if self.payload_type == _TYPE_FULL:
@@ -732,7 +789,11 @@ class PayloadChecker(object):
                     msg, "size", part_report, field
                 )
                 self._CheckMandatoryField(
-                    msg, "hash", part_report, field, convert=common.FormatSha256
+                    msg,
+                    "hash",
+                    part_report,
+                    field,
+                    convert=common.FormatSha256,
                 )
 
                 # Check: old_{kernel,rootfs} size must fit in respective partition.
@@ -784,11 +845,16 @@ class PayloadChecker(object):
         """
         # Check: length is non-zero.
         if length == 0:
-            raise error.PayloadError("%s: %s is zero." % (op_name, length_name))
+            raise error.PayloadError(
+                "%s: %s is zero." % (op_name, length_name)
+            )
 
         # Check that length matches number of blocks.
         self._CheckBlocksFitLength(
-            length, total_blocks, self.block_size, "%s: %s" % (op_name, length_name)
+            length,
+            total_blocks,
+            self.block_size,
+            "%s: %s" % (op_name, length_name),
         )
 
     def _CheckExtents(self, extents, usable_size, block_counters, name):
@@ -819,13 +885,19 @@ class PayloadChecker(object):
 
             # Check: num_blocks > 0.
             if num_blocks == 0:
-                raise error.PayloadError("%s: extent length is zero." % ex_name)
+                raise error.PayloadError(
+                    "%s: extent length is zero." % ex_name
+                )
 
             # Check: Make sure we're within the partition limit.
             if usable_size and end_block * self.block_size > usable_size:
                 raise error.PayloadError(
                     "%s: extent (%s) exceeds usable partition size (%d)."
-                    % (ex_name, common.FormatExtent(ex, self.block_size), usable_size)
+                    % (
+                        ex_name,
+                        common.FormatExtent(ex, self.block_size),
+                        usable_size,
+                    )
                 )
 
             # Record block usage.
@@ -836,7 +908,9 @@ class PayloadChecker(object):
 
         return total_num_blocks
 
-    def _CheckReplaceOperation(self, op, data_length, total_dst_blocks, op_name):
+    def _CheckReplaceOperation(
+        self, op, data_length, total_dst_blocks, op_name
+    ):
         """Specific checks for REPLACE/REPLACE_BZ/REPLACE_XZ operations.
 
         Args:
@@ -851,7 +925,8 @@ class PayloadChecker(object):
         # Check: total_dst_blocks is not a floating point.
         if isinstance(total_dst_blocks, float):
             raise error.PayloadError(
-                "%s: contains invalid data type of " "total_dst_blocks." % op_name
+                "%s: contains invalid data type of "
+                "total_dst_blocks." % op_name
             )
 
         # Check: Does not contain src extents.
@@ -860,7 +935,9 @@ class PayloadChecker(object):
 
         # Check: Contains data.
         if data_length is None:
-            raise error.PayloadError("%s: missing data_{offset,length}." % op_name)
+            raise error.PayloadError(
+                "%s: missing data_{offset,length}." % op_name
+            )
 
         if op.type == common.OpType.REPLACE:
             PayloadChecker._CheckBlocksFitLength(
@@ -897,7 +974,9 @@ class PayloadChecker(object):
         if op.data_offset:
             raise error.PayloadError("%s: contains data_offset." % op_name)
 
-    def _CheckAnyDiffOperation(self, op, data_length, total_dst_blocks, op_name):
+    def _CheckAnyDiffOperation(
+        self, op, data_length, total_dst_blocks, op_name
+    ):
         """Specific checks for SOURCE_BSDIFF, PUFFDIFF and BROTLI_BSDIFF
            operations.
 
@@ -912,7 +991,9 @@ class PayloadChecker(object):
         """
         # Check: data_{offset,length} present.
         if data_length is None:
-            raise error.PayloadError("%s: missing data_{offset,length}." % op_name)
+            raise error.PayloadError(
+                "%s: missing data_{offset,length}." % op_name
+            )
 
         # Check: data_length is strictly smaller than the allotted dst blocks.
         if data_length >= total_dst_blocks * self.block_size:
@@ -931,10 +1012,14 @@ class PayloadChecker(object):
         # Check the existence of src_length and dst_length for legacy bsdiffs.
         if op.type == common.OpType.SOURCE_BSDIFF and self.minor_version <= 3:
             if not op.HasField("src_length") or not op.HasField("dst_length"):
-                raise error.PayloadError("%s: require {src,dst}_length." % op_name)
+                raise error.PayloadError(
+                    "%s: require {src,dst}_length." % op_name
+                )
         else:
             if op.HasField("src_length") or op.HasField("dst_length"):
-                raise error.PayloadError("%s: unneeded {src,dst}_length." % op_name)
+                raise error.PayloadError(
+                    "%s: unneeded {src,dst}_length." % op_name
+                )
 
     def _CheckSourceCopyOperation(
         self, data_offset, total_src_blocks, total_dst_blocks, op_name
@@ -952,7 +1037,9 @@ class PayloadChecker(object):
         """
         # Check: No data_{offset,length}.
         if data_offset is not None:
-            raise error.PayloadError("%s: contains data_{offset,length}." % op_name)
+            raise error.PayloadError(
+                "%s: contains data_{offset,length}." % op_name
+            )
 
         # Check: total_src_blocks == total_dst_blocks.
         if total_src_blocks != total_dst_blocks:
@@ -974,7 +1061,9 @@ class PayloadChecker(object):
         """
         # Check: total_src_blocks != 0.
         if total_src_blocks == 0:
-            raise error.PayloadError("%s: no src blocks in a source op." % op_name)
+            raise error.PayloadError(
+                "%s: no src blocks in a source op." % op_name
+            )
 
         # Check: src_sha256_hash present in minor version >= 3.
         if self.minor_version >= 3 and op.src_sha256_hash is None:
@@ -1011,10 +1100,16 @@ class PayloadChecker(object):
         """
         # Check extents.
         total_src_blocks = self._CheckExtents(
-            op.src_extents, old_usable_size, old_block_counters, op_name + ".src_extents"
+            op.src_extents,
+            old_usable_size,
+            old_block_counters,
+            op_name + ".src_extents",
         )
         total_dst_blocks = self._CheckExtents(
-            op.dst_extents, new_usable_size, new_block_counters, op_name + ".dst_extents"
+            op.dst_extents,
+            new_usable_size,
+            new_block_counters,
+            op_name + ".dst_extents",
         )
 
         # Check: data_offset present <==> data_length present.
@@ -1030,9 +1125,13 @@ class PayloadChecker(object):
 
         # Check {src,dst}_length, if present.
         if op.HasField("src_length"):
-            self._CheckLength(op.src_length, total_src_blocks, op_name, "src_length")
+            self._CheckLength(
+                op.src_length, total_src_blocks, op_name, "src_length"
+            )
         if op.HasField("dst_length"):
-            self._CheckLength(op.dst_length, total_dst_blocks, op_name, "dst_length")
+            self._CheckLength(
+                op.dst_length, total_dst_blocks, op_name, "dst_length"
+            )
 
         if op.HasField("data_sha256_hash"):
             blob_hash_counts["hashed"] += 1
@@ -1040,7 +1139,8 @@ class PayloadChecker(object):
             # Check: Operation carries data.
             if data_offset is None:
                 raise error.PayloadError(
-                    "%s: data_sha256_hash present but no data_{offset,length}." % op_name
+                    "%s: data_sha256_hash present but no data_{offset,length}."
+                    % op_name
                 )
 
             # Check: Hash verifies correctly.
@@ -1060,7 +1160,9 @@ class PayloadChecker(object):
             if self.allow_unhashed:
                 blob_hash_counts["unhashed"] += 1
             else:
-                raise error.PayloadError("%s: unhashed operation not allowed." % op_name)
+                raise error.PayloadError(
+                    "%s: unhashed operation not allowed." % op_name
+                )
 
         if data_offset is not None:
             # Check: Contiguous use of data section.
@@ -1076,7 +1178,9 @@ class PayloadChecker(object):
             common.OpType.REPLACE_BZ,
             common.OpType.REPLACE_XZ,
         ):
-            self._CheckReplaceOperation(op, data_length, total_dst_blocks, op_name)
+            self._CheckReplaceOperation(
+                op, data_length, total_dst_blocks, op_name
+            )
         elif op.type == common.OpType.ZERO and self.minor_version >= 4:
             self._CheckZeroOperation(op, op_name)
         elif op.type == common.OpType.SOURCE_COPY and self.minor_version >= 2:
@@ -1084,14 +1188,24 @@ class PayloadChecker(object):
                 data_offset, total_src_blocks, total_dst_blocks, op_name
             )
             self._CheckAnySourceOperation(op, total_src_blocks, op_name)
-        elif op.type == common.OpType.SOURCE_BSDIFF and self.minor_version >= 2:
-            self._CheckAnyDiffOperation(op, data_length, total_dst_blocks, op_name)
+        elif (
+            op.type == common.OpType.SOURCE_BSDIFF and self.minor_version >= 2
+        ):
+            self._CheckAnyDiffOperation(
+                op, data_length, total_dst_blocks, op_name
+            )
             self._CheckAnySourceOperation(op, total_src_blocks, op_name)
-        elif op.type == common.OpType.BROTLI_BSDIFF and self.minor_version >= 4:
-            self._CheckAnyDiffOperation(op, data_length, total_dst_blocks, op_name)
+        elif (
+            op.type == common.OpType.BROTLI_BSDIFF and self.minor_version >= 4
+        ):
+            self._CheckAnyDiffOperation(
+                op, data_length, total_dst_blocks, op_name
+            )
             self._CheckAnySourceOperation(op, total_src_blocks, op_name)
         elif op.type == common.OpType.PUFFDIFF and self.minor_version >= 5:
-            self._CheckAnyDiffOperation(op, data_length, total_dst_blocks, op_name)
+            self._CheckAnyDiffOperation(
+                op, data_length, total_dst_blocks, op_name
+            )
             self._CheckAnySourceOperation(op, total_src_blocks, op_name)
         else:
             raise error.PayloadError(
@@ -1117,7 +1231,9 @@ class PayloadChecker(object):
           An array of unsigned short elements initialized to zero, one for each of
           the blocks necessary for containing the partition.
         """
-        return array.array("H", itertools.repeat(0, self._SizeToNumBlocks(total_size)))
+        return array.array(
+            "H", itertools.repeat(0, self._SizeToNumBlocks(total_size))
+        )
 
     def _CheckOperations(
         self,
@@ -1190,7 +1306,9 @@ class PayloadChecker(object):
 
             # Check: Type is valid.
             if op.type not in op_counts:
-                raise error.PayloadError("%s: invalid type (%d)." % (op_name, op.type))
+                raise error.PayloadError(
+                    "%s: invalid type (%d)." % (op_name, op.type)
+                )
             op_counts[op.type] += 1
 
             curr_data_used = self._CheckOperation(
@@ -1211,14 +1329,18 @@ class PayloadChecker(object):
         report.AddField("total operations", op_num)
         report.AddField(
             None,
-            histogram.Histogram.FromCountDict(op_counts, key_names=common.OpType.NAMES),
+            histogram.Histogram.FromCountDict(
+                op_counts, key_names=common.OpType.NAMES
+            ),
             indent=1,
         )
         report.AddField("total blobs", sum(blob_hash_counts.values()))
         report.AddField(
             None, histogram.Histogram.FromCountDict(blob_hash_counts), indent=1
         )
-        report.AddField("total blob size", _AddHumanReadableSize(total_data_used))
+        report.AddField(
+            "total blob size", _AddHumanReadableSize(total_data_used)
+        )
         report.AddField(
             None,
             histogram.Histogram.FromCountDict(
@@ -1241,12 +1363,15 @@ class PayloadChecker(object):
         new_write_hist = histogram.Histogram.FromKeyList(
             new_block_counters[: self._SizeToNumBlocks(new_fs_size)]
         )
-        report.AddField("block write hist", new_write_hist, linebreak=True, indent=1)
+        report.AddField(
+            "block write hist", new_write_hist, linebreak=True, indent=1
+        )
 
         # Check: Full update must write each dst block once.
         if self.payload_type == _TYPE_FULL and new_write_hist.GetKeys() != [1]:
             raise error.PayloadError(
-                "%s: not all blocks written exactly once during full update." % base_name
+                "%s: not all blocks written exactly once during full update."
+                % base_name
             )
 
         return total_data_used
@@ -1291,7 +1416,9 @@ class PayloadChecker(object):
             hasher=payload_hasher,
         )
 
-        for sig, sig_name in common.SignatureIter(sigs.signatures, "signatures"):
+        for sig, sig_name in common.SignatureIter(
+            sigs.signatures, "signatures"
+        ):
             sig_report = report.AddSubReport(sig_name)
 
             # Check: Signature contains mandatory fields.
@@ -1301,7 +1428,10 @@ class PayloadChecker(object):
             # Check: Signatures pertains to actual payload hash.
             if sig.data:
                 self._CheckSha256Signature(
-                    sig.data, pubkey_file_name, payload_hasher.digest(), sig_name
+                    sig.data,
+                    pubkey_file_name,
+                    payload_hasher.digest(),
+                    sig_name,
                 )
 
     def Run(
@@ -1340,7 +1470,8 @@ class PayloadChecker(object):
             if metadata_size and self.payload.metadata_size != metadata_size:
                 raise error.PayloadError(
                     "Invalid payload metadata size in payload(%d) "
-                    "vs given(%d)" % (self.payload.metadata_size, metadata_size)
+                    "vs given(%d)"
+                    % (self.payload.metadata_size, metadata_size)
                 )
 
             # Check metadata signature (if provided).
@@ -1358,7 +1489,8 @@ class PayloadChecker(object):
             # Check: Payload version is valid.
             if self.payload.header.version not in (1, 2):
                 raise error.PayloadError(
-                    "Unknown payload version (%d)." % self.payload.header.version
+                    "Unknown payload version (%d)."
+                    % self.payload.header.version
                 )
             report.AddField("version", self.payload.header.version)
             report.AddField("manifest len", self.payload.header.manifest_len)
@@ -1378,7 +1510,9 @@ class PayloadChecker(object):
                 "new_kernel_info",
                 "new_rootfs_info",
             ):
-                self._CheckElemNotPresent(self.payload.manifest, field, "manifest")
+                self._CheckElemNotPresent(
+                    self.payload.manifest, field, "manifest"
+                )
 
             total_blob_size = 0
             for part, operations in (

@@ -153,7 +153,9 @@ def Read(file_obj, length, offset=None, hasher=None):
     try:
         data = file_obj.read(length)
     except IOError as e:
-        raise PayloadError("error reading from file (%s): %s" % (file_obj.name, e))
+        raise PayloadError(
+            "error reading from file (%s): %s" % (file_obj.name, e)
+        )
 
     if len(data) != length:
         raise PayloadError(
@@ -216,7 +218,10 @@ def _OperationNameFormatter(op, op_name):
 def OperationIter(operations, base_name, reverse=False):
     """An (item, name) iterator for update operations."""
     return _ObjNameIter(
-        operations, base_name, reverse=reverse, name_format_func=_OperationNameFormatter
+        operations,
+        base_name,
+        reverse=reverse,
+        name_format_func=_OperationNameFormatter,
     )
 
 

@@ -11,11 +11,13 @@ def readPayloadMetadata(zfp: zipfile.ZipFile, entry):
     HEADER_LEN = struct.calcsize(HEADER_STRUCT)
     with zfp.open(entry) as fp:
         header = fp.read(HEADER_LEN)
-        (magic, version, manifest_length, metadata_signature_len) = struct.unpack(
-            HEADER_STRUCT, header
+        (magic, version, manifest_length, metadata_signature_len) = (
+            struct.unpack(HEADER_STRUCT, header)
         )
         assert magic == _MAGIC
-        assert version == 2, "Unsupported major payload version " + str(version)
+        assert version == 2, "Unsupported major payload version " + str(
+            version
+        )
         print(f"{manifest_length} {metadata_signature_len}")
         return header + fp.read(manifest_length + metadata_signature_len)
 
@@ -26,7 +28,9 @@ def main(argv):
         return 1
     infile = argv[1]
     outfile = argv[2]
-    with zipfile.ZipFile(infile, "r") as inzfp, zipfile.ZipFile(outfile, "w") as outzfp:
+    with zipfile.ZipFile(infile, "r") as inzfp, zipfile.ZipFile(
+        outfile, "w"
+    ) as outzfp:
         for entry in inzfp.infolist():
             if (
                 entry.filename.startswith("META")

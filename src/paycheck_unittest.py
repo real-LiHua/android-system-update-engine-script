@@ -63,7 +63,8 @@ class PaycheckTest(unittest.TestCase):
     def checkPayload(self, type_arg, payload):
         """Checks Payload."""
         self.assertEqual(
-            0, subprocess.check_call(["./paycheck.py", "-t", type_arg, payload])
+            0,
+            subprocess.check_call(["./paycheck.py", "-t", type_arg, payload]),
         )
 
     def testFullPayload(self):

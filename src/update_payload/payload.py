@@ -106,13 +106,18 @@ class Payload(object):
             self.manifest_len = _ReadInt(
                 payload_file, self._MANIFEST_LEN_SIZE, True, hasher=hasher
             )
-            self.size = len(self._MAGIC) + self._VERSION_SIZE + self._MANIFEST_LEN_SIZE
+            self.size = (
+                len(self._MAGIC) + self._VERSION_SIZE + self._MANIFEST_LEN_SIZE
+            )
             self.metadata_signature_len = 0
 
             if self.version == common.BRILLO_MAJOR_PAYLOAD_VERSION:
                 self.size += self._METADATA_SIGNATURE_LEN_SIZE
                 self.metadata_signature_len = _ReadInt(
-                    payload_file, self._METADATA_SIGNATURE_LEN_SIZE, True, hasher=hasher
+                    payload_file,
+                    self._METADATA_SIGNATURE_LEN_SIZE,
+                    True,
+                    hasher=hasher,
                 )
 
     def __init__(self, payload_file, payload_file_offset=0):
@@ -126,12 +131,16 @@ class Payload(object):
             self.name = payload_file
             with zipfile.ZipFile(payload_file) as zfp:
                 if "payload.bin" not in zfp.namelist():
-                    raise ValueError(f"payload.bin missing in archive {payload_file}")
+                    raise ValueError(
+                        f"payload.bin missing in archive {payload_file}"
+                    )
                 self.payload_file = zfp.open("payload.bin", "r")
         elif isinstance(payload_file, str):
             self.name = payload_file
             payload_fp = open(payload_file, "rb")
-            payload_bytes = mmap.mmap(payload_fp.fileno(), 0, access=mmap.ACCESS_READ)
+            payload_bytes = mmap.mmap(
+                payload_fp.fileno(), 0, access=mmap.ACCESS_READ
+            )
             self.payload_file = io.BytesIO(payload_bytes)
         else:
             self.name = payload_file.name
@@ -165,7 +174,10 @@ class Payload(object):
     @property
     def is_incremental(self):
         return any(
-            [part.HasField("old_partition_info") for part in self.manifest.partitions]
+            [
+                part.HasField("old_partition_info")
+                for part in self.manifest.partitions
+            ]
         )
 
     @property
@@ -212,7 +224,9 @@ class Payload(object):
             raise PayloadError("payload header not present")
 
         return common.Read(
-            self.payload_file, self.header.manifest_len, hasher=self.manifest_hasher
+            self.payload_file,
+            self.header.manifest_len,
+            hasher=self.manifest_hasher,
         )
 
     def _ReadMetadataSignature(self):
@@ -285,7 +299,9 @@ class Payload(object):
             self.metadata_signature.ParseFromString(metadata_signature_raw)
 
         self.metadata_size = self.header.size + self.header.manifest_len
-        self.data_offset = self.metadata_size + self.header.metadata_signature_len
+        self.data_offset = (
+            self.metadata_size + self.header.metadata_signature_len
+        )
 
         if (
             self.manifest.signatures_offset
