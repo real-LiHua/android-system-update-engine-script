@@ -43,63 +43,83 @@ import unittest
 
 
 class PaycheckTest(unittest.TestCase):
-  """Test paycheck functions."""
+    """Test paycheck functions."""
 
-  def setUp(self):
-    self.tmpdir = os.getenv('T')
+    def setUp(self):
+        self.tmpdir = os.getenv("T")
 
-    self._full_payload = os.path.join(self.tmpdir, 'full_payload.bin')
-    self._delta_payload = os.path.join(self.tmpdir, 'delta_payload.bin')
+        self._full_payload = os.path.join(self.tmpdir, "full_payload.bin")
+        self._delta_payload = os.path.join(self.tmpdir, "delta_payload.bin")
 
-    self._new_kernel = os.path.join(self.tmpdir, 'disk_ext2_4k.img')
-    self._new_root = os.path.join(self.tmpdir, 'disk_sqfs_default.img')
-    self._old_kernel = os.path.join(self.tmpdir,
-                                    'disk_ext2_4k_empty.img')
-    self._old_root = os.path.join(self.tmpdir, 'disk_sqfs_empty.img')
+        self._new_kernel = os.path.join(self.tmpdir, "disk_ext2_4k.img")
+        self._new_root = os.path.join(self.tmpdir, "disk_sqfs_default.img")
+        self._old_kernel = os.path.join(self.tmpdir, "disk_ext2_4k_empty.img")
+        self._old_root = os.path.join(self.tmpdir, "disk_sqfs_empty.img")
 
-    # Temp output files.
-    self._kernel_part = os.path.join(self.tmpdir, 'kern.part')
-    self._root_part = os.path.join(self.tmpdir, 'root.part')
+        # Temp output files.
+        self._kernel_part = os.path.join(self.tmpdir, "kern.part")
+        self._root_part = os.path.join(self.tmpdir, "root.part")
 
-  def checkPayload(self, type_arg, payload):
-    """Checks Payload."""
-    self.assertEqual(0, subprocess.check_call(['./paycheck.py', '-t',
-                                               type_arg, payload]))
+    def checkPayload(self, type_arg, payload):
+        """Checks Payload."""
+        self.assertEqual(
+            0, subprocess.check_call(["./paycheck.py", "-t", type_arg, payload])
+        )
 
-  def testFullPayload(self):
-    """Checks the full payload statically."""
-    self.checkPayload('full', self._full_payload)
+    def testFullPayload(self):
+        """Checks the full payload statically."""
+        self.checkPayload("full", self._full_payload)
 
-  def testDeltaPayload(self):
-    """Checks the delta payload statically."""
-    self.checkPayload('delta', self._delta_payload)
+    def testDeltaPayload(self):
+        """Checks the delta payload statically."""
+        self.checkPayload("delta", self._delta_payload)
 
-  def testApplyFullPayload(self):
-    """Applies full payloads and compares results to new sample images."""
-    self.assertEqual(0, subprocess.check_call(['./paycheck.py',
-                                               self._full_payload,
-                                               '--part_names', 'kernel', 'root',
-                                               '--out_dst_part_paths',
-                                               self._kernel_part,
-                                               self._root_part]))
+    def testApplyFullPayload(self):
+        """Applies full payloads and compares results to new sample images."""
+        self.assertEqual(
+            0,
+            subprocess.check_call(
+                [
+                    "./paycheck.py",
+                    self._full_payload,
+                    "--part_names",
+                    "kernel",
+                    "root",
+                    "--out_dst_part_paths",
+                    self._kernel_part,
+                    self._root_part,
+                ]
+            ),
+        )
 
-    # Check if generated full image is equal to sample image.
-    self.assertTrue(filecmp.cmp(self._kernel_part, self._new_kernel))
-    self.assertTrue(filecmp.cmp(self._root_part, self._new_root))
+        # Check if generated full image is equal to sample image.
+        self.assertTrue(filecmp.cmp(self._kernel_part, self._new_kernel))
+        self.assertTrue(filecmp.cmp(self._root_part, self._new_root))
 
-  def testApplyDeltaPayload(self):
-    """Applies delta to old image and checks against new sample images."""
-    self.assertEqual(0, subprocess.check_call(['./paycheck.py',
-                                               self._delta_payload,
-                                               '--part_names', 'kernel', 'root',
-                                               '--src_part_paths',
-                                               self._old_kernel, self._old_root,
-                                               '--out_dst_part_paths',
-                                               self._kernel_part,
-                                               self._root_part]))
+    def testApplyDeltaPayload(self):
+        """Applies delta to old image and checks against new sample images."""
+        self.assertEqual(
+            0,
+            subprocess.check_call(
+                [
+                    "./paycheck.py",
+                    self._delta_payload,
+                    "--part_names",
+                    "kernel",
+                    "root",
+                    "--src_part_paths",
+                    self._old_kernel,
+                    self._old_root,
+                    "--out_dst_part_paths",
+                    self._kernel_part,
+                    self._root_part,
+                ]
+            ),
+        )
 
-    self.assertTrue(filecmp.cmp(self._kernel_part, self._new_kernel))
-    self.assertTrue(filecmp.cmp(self._root_part, self._new_root))
+        self.assertTrue(filecmp.cmp(self._kernel_part, self._new_kernel))
+        self.assertTrue(filecmp.cmp(self._root_part, self._new_root))
 
-if __name__ == '__main__':
-  unittest.main()
+
+if __name__ == "__main__":
+    unittest.main()
